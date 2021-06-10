@@ -2,16 +2,27 @@
 import click
 import logging
 from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
+from datasets import load_dataset
+import torch
+import os, sys
 
 
-@click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
+
+def main():
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(dir_path)
+
+    train_dataset = load_dataset("boolq",split="train")
+
+    validation_dataset = load_dataset("boolq",split="validation")
+    validation_dataset.set_format('torch')
+
+    torch.save(train_dataset,"../../data/processed/train.pt")
+    torch.save(validation_dataset,"../../data/processed/test.pt")
+
     logger = logging.getLogger(__name__)
     logger.info('making final data set from raw data')
 
@@ -25,6 +36,5 @@ if __name__ == '__main__':
 
     # find .env automagically by walking up directories until it's found, then
     # load up the .env entries as environment variables
-    load_dotenv(find_dotenv())
 
     main()
