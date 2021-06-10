@@ -1,7 +1,16 @@
 from tqdm import tqdm
 import torch
-import model
+from model import myModel
 import os
+import random
+from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
+import numpy as np
+
+# Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 # Change directory
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
@@ -9,13 +18,17 @@ os.chdir(dir_path)
 #Import data
 train_dataloader = torch.load("../../data/processed/train.pt")
 test_set = torch.load("../../data/processed/test.pt")
-
-
-
+model = myModel()
 epochs = 5
 grad_acc_steps = 1
+learning_rate = 1e-5
+optimizer = AdamW(model.parameters(), lr=learning_rate, eps=1e-8)
+
 train_loss_values = []
 dev_acc_values = []
+
+
+
 
 for _ in tqdm(range(epochs), desc="Epoch"):
 
