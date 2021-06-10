@@ -1,3 +1,6 @@
+from tqdm import tqdm
+import torch
+
 epochs = 5
 grad_acc_steps = 1
 train_loss_values = []
