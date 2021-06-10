@@ -20,7 +20,6 @@ def encode_data(dataloader, max_length):
     answers = []
    
     
-
     for values in dataloader:
         answer = values['answer']
         question = values['question']
