@@ -44,9 +44,11 @@ def main():
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
+    logger = logging.getLogger(__name__)
     dir_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(dir_path)
 
+    logger.info('> Loading Dataset')
     train_dataset = load_dataset("boolq",split="train")
     validation_dataset = load_dataset("boolq",split="validation")
     
@@ -55,6 +57,7 @@ def main():
     #torch.save(train_dataset,"../../data/raw/train.pt")
     #torch.save(validation_dataset,"../../data/raw/test.pt")
 
+    logger.info('> Encoding raw data')
     max_seq_length = 256
     input_ids_train, attention_masks_train, answers_train = encode_data(train_dataset,max_seq_length)
     input_ids_dev, attention_masks_dev, answers_dev = encode_data(validation_dataset,max_seq_length)
@@ -62,9 +65,6 @@ def main():
     train_features = (input_ids_train, attention_masks_train, answers_train)
     dev_features = (input_ids_dev, attention_masks_dev, answers_dev)
     
-
-    #Creating the dataloader
-
     # Building Dataloaders
     batch_size = 32
 
@@ -84,18 +84,10 @@ def main():
     torch.save(train_dataloader,"../../data/processed/train.pt")
     torch.save(dev_dataloader,"../../data/processed/test.pt")
 
-    logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
 
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
-
-    # not used in this stub but often useful for finding various files
-    project_dir = Path(__file__).resolve().parents[2]
-
-    # find .env automagically by walking up directories until it's found, then
-    # load up the .env entries as environment variables
 
     main()
