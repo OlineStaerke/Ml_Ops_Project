@@ -1,7 +1,9 @@
 ML
 ==============================
 
-Ml Project
+ML Operations Project at DTU Compute.
+
+This model is inspired by Vincent Micheli's Article [Deep Learning has (almost) all the answers: Yes/No Question Answering with Transformers](https://medium.com/illuin/deep-learning-has-almost-all-the-answers-yes-no-question-answering-with-transformers-223bebb70189)
 
 Project Organization
 ------------
