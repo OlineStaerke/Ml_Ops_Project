@@ -66,10 +66,14 @@ def main():
     
     # Building Dataloaders
     batch_size = 10
-    count = 500
-    count_dev = 500
-    train_features_tensors = [torch.tensor(feature, dtype=torch.long) for feature in train_features][:count]
-    dev_features_tensors = [torch.tensor(feature, dtype=torch.long) for feature in dev_features][:count_dev]
+    count = 50
+    count_dev = 50
+    train_features_tensors = [torch.tensor(feature, dtype=torch.long) for feature in train_features]
+    dev_features_tensors = [torch.tensor(feature, dtype=torch.long) for feature in dev_features]
+
+    for i in range(3):
+        train_features_tensors[i] = train_features_tensors[i][:count]
+        dev_features_tensors[i] = dev_features_tensors[i][:count_dev]
 
     train_dataset = TensorDataset(*train_features_tensors)
     dev_dataset = TensorDataset(*dev_features_tensors)
