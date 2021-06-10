@@ -53,6 +53,7 @@ for _ in tqdm(range(epochs), desc="Epoch"):
       epoch_train_loss += loss.item()
 
       loss.backward()
+      wandb.log({"loss:": loss})
       
       if (step+1) % grad_acc_steps == 0: # Gradient accumulation is over
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) # Clipping gradients
