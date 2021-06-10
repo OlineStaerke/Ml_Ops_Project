@@ -17,15 +17,11 @@ def encode_data(dataloader, max_length):
     """Encode the question/passage pairs into features than can be fed to the model."""
     input_ids = []
     attention_masks = []
-    answers = []
-   
-    
+
     for values in dataloader:
-        answer = values['answer']
         question = values['question']
         passage = values['passage']
         
-        answers.append(answer)
 
         encoded_data = tokenizer.encode_plus(question, passage, max_length=max_length, pad_to_max_length=True, truncation_strategy="longest_first")
         encoded_pair = encoded_data["input_ids"]
@@ -35,7 +31,7 @@ def encode_data(dataloader, max_length):
         attention_masks.append(attention_mask)
         
 
-    return np.array(input_ids), np.array(attention_masks), answers
+    return np.array(input_ids), np.array(attention_masks)
 
 
 
@@ -53,14 +49,20 @@ def main():
     validation_dataset = load_dataset("boolq",split="validation")
     
   
-    #Save not encoded data
+    #Save raw data
     #torch.save(train_dataset,"../../data/raw/train.pt")
     #torch.save(validation_dataset,"../../data/raw/test.pt")
 
+<<<<<<< HEAD
     logger.info('> Encoding raw data')
+=======
+    # Encoding the question/passage pairs
+>>>>>>> d50f20252f47e38cb4aa58acdecac6be9d95ead7
     max_seq_length = 256
-    input_ids_train, attention_masks_train, answers_train = encode_data(train_dataset,max_seq_length)
-    input_ids_dev, attention_masks_dev, answers_dev = encode_data(validation_dataset,max_seq_length)
+    input_ids_train, attention_masks_train = encode_data(train_dataset,max_seq_length)
+    answers_train = np.array([int(a) for a in train_dataset['answer']])
+    input_ids_dev, attention_masks_dev = encode_data(validation_dataset,max_seq_length)
+    answers_dev = np.array([int(a) for a in validation_dataset['answer']])
 
     train_features = (input_ids_train, attention_masks_train, answers_train)
     dev_features = (input_ids_dev, attention_masks_dev, answers_dev)
@@ -84,6 +86,11 @@ def main():
     torch.save(train_dataloader,"../../data/processed/train.pt")
     torch.save(dev_dataloader,"../../data/processed/test.pt")
 
+<<<<<<< HEAD
+=======
+    logger = logging.getLogger(__name__)
+    logger.info('Making final data set from raw data')
+>>>>>>> d50f20252f47e38cb4aa58acdecac6be9d95ead7
 
 
 if __name__ == '__main__':
