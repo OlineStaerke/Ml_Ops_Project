@@ -53,11 +53,7 @@ def main():
     #torch.save(train_dataset,"../../data/raw/train.pt")
     #torch.save(validation_dataset,"../../data/raw/test.pt")
 
-<<<<<<< HEAD
     logger.info('> Encoding raw data')
-=======
-    # Encoding the question/passage pairs
->>>>>>> d50f20252f47e38cb4aa58acdecac6be9d95ead7
     max_seq_length = 256
     input_ids_train, attention_masks_train = encode_data(train_dataset,max_seq_length)
     answers_train = np.array([int(a) for a in train_dataset['answer']])
@@ -86,11 +82,6 @@ def main():
     torch.save(train_dataloader,"../../data/processed/train.pt")
     torch.save(dev_dataloader,"../../data/processed/test.pt")
 
-<<<<<<< HEAD
-=======
-    logger = logging.getLogger(__name__)
-    logger.info('Making final data set from raw data')
->>>>>>> d50f20252f47e38cb4aa58acdecac6be9d95ead7
 
 
 if __name__ == '__main__':
