@@ -1,7 +1,9 @@
 ML
 ==============================
 
-Ml Project
+ML Operations Project at DTU Compute.
+
+The base-line for this model is inspired by https://medium.com/illuin/deep-learning-has-almost-all-the-answers-yes-no-question-answering-with-transformers-223bebb70189
 
 Project Organization
 ------------
