@@ -6,7 +6,8 @@ import random
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import numpy as np
-
+import wandb
+wandb.init(project="ml_ops_squad")
 # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -19,6 +20,7 @@ os.chdir(dir_path)
 train_dataloader = torch.load("../../data/processed/train.pt")
 test_set = torch.load("../../data/processed/test.pt")
 model = myModel()
+wandb.watch(model)
 epochs = 5
 grad_acc_steps = 1
 learning_rate = 1e-5
