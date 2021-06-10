@@ -7,6 +7,8 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import numpy as np
 import wandb
+from IPython import embed
+#embed()
 wandb.init(project="ml_ops_squad")
 # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -39,7 +41,7 @@ for _ in tqdm(range(epochs), desc="Epoch"):
   model.train()
   model.zero_grad()
 
-  for step, batch in enumerate(train_dataloader):
+  for step, batch in tqdm((train_dataloader),leave=False):
 
       input_ids = batch[0].to(device)
       attention_masks = batch[1].to(device)
