@@ -71,9 +71,9 @@ def main():
     train_features_tensors = [torch.tensor(feature, dtype=torch.long) for feature in train_features]
     dev_features_tensors = [torch.tensor(feature, dtype=torch.long) for feature in dev_features]
 
-    for i in range(3):
-        train_features_tensors[i] = train_features_tensors[i][:count]
-        dev_features_tensors[i] = dev_features_tensors[i][:count_dev]
+    # for i in range(3):
+    #     train_features_tensors[i] = train_features_tensors[i][:count]
+    #     dev_features_tensors[i] = dev_features_tensors[i][:count_dev]
 
     train_dataset = TensorDataset(*train_features_tensors)
     dev_dataset = TensorDataset(*dev_features_tensors)
@@ -84,7 +84,7 @@ def main():
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=batch_size)
     dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=batch_size)
 
-    #embed()
+    embed()
     #Save dataloader
     torch.save(train_dataloader,"../../data/processed/train.pt")
     torch.save(dev_dataloader,"../../data/processed/test.pt")
