@@ -1,6 +1,16 @@
 from tqdm import tqdm
 import torch
 import model
+import os
+# Change directory
+dir_path = os.path.dirname(os.path.realpath(__file__))
+os.chdir(dir_path)
+
+#Import data
+train_dataloader = torch.load("../../data/processed/train.pt")
+test_set = torch.load("../../data/processed/test.pt")
+
+
 
 epochs = 5
 grad_acc_steps = 1
