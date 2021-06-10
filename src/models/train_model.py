@@ -10,6 +10,8 @@ import numpy as np
 # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
 #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 # Change directory
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -19,6 +21,9 @@ os.chdir(dir_path)
 train_dataloader = torch.load("../../data/processed/train.pt")
 test_set = torch.load("../../data/processed/test.pt")
 
+# To train on 5 batches only
+indices = torch.randperm(len(train_dataloader))[:5]
+train_dataset_subset = torch.utils.data.Subset(train_dataloader, indices)
 
 model = myModel()
 epochs = 5
@@ -36,11 +41,13 @@ for _ in tqdm(range(epochs), desc="Epoch"):
   model.train()
   model.zero_grad()
 
+  # tqdm is a Python library that allows you to output a smart progress bar by wrapping around any iterable
+  # leave ensures one continuous progress bar across all loops
   for step, batch in tqdm(enumerate(train_dataloader),leave=False):
 
-      input_ids = batch[0]#.to(device)
-      attention_masks = batch[1]#.to(device)
-      labels = batch[2]#.to(device)     
+      input_ids = batch[0].to(device)
+      attention_masks = batch[1].to(device)
+      labels = batch[2].to(device)     
 
       outputs = model(input_ids, token_type_ids=None, attention_mask=attention_masks, labels=labels)
 
