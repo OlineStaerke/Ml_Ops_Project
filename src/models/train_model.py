@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import torch
+import model
 
 epochs = 5
 grad_acc_steps = 1
