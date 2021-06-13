@@ -1,3 +1,4 @@
 Venv/
 data/
 wandb/
+config/

@@ -6,6 +6,8 @@ from transformers import AdamW
 from src.models.model import myModel
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
+
+# TODO: Setup the test correctly to check for a change of variables when training the model
 @pytest.fixture
 def setup():
     
