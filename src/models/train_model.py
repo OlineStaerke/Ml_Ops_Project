@@ -8,16 +8,36 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Adam
 import numpy as np
 import wandb
 from IPython import embed
-#embed()
-#wandb.init(project="ml_ops_squad")
+
+
+################
+##AZURE CONFIG##
+################
+
+import azureml.core
+from azureml.core import Workspace
+
+# Load the workspace from the saved config file
+ws = Workspace.from_config()
+print('Ready to use Azure ML {} to work with {}'.format(azureml.core.VERSION, ws.name))
+
+#################
+#HYPERPARAMETERS#
+#################
+
 # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
 #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epochs = 5,
+model = myModel()
+epochs = 5
 learning_rate = 1e-5
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+grad_acc_steps = 1
+optimizer = AdamW(model.parameters(), lr=learning_rate, eps=1e-8)
 
+###############
+#DATA LOADING##
+###############
 
-# Change directory
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
@@ -25,20 +45,25 @@ os.chdir(dir_path)
 train_dataloader = torch.load("../../data/processed/train.pt")
 test_set = torch.load("../../data/processed/test.pt")
 
+# TODO: This is only if you wish to work with 5 batches at a time
 # To train on 5 batches only
-indices = torch.randperm(len(train_dataloader))[:5]
-train_dataset_subset = torch.utils.data.Subset(train_dataloader, indices)
+# indices = torch.randperm(len(train_dataloader))[:5]
+#train_dataset_subset = torch.utils.data.Subset(train_dataloader, indices)
 
-model = myModel()
+##################
+#WEIGHTS & BIASES#
+##################
+
 #wandb.watch(model)
-grad_acc_steps = 1
-optimizer = AdamW(model.parameters(), lr=learning_rate, eps=1e-8)
+#wandb.init(project="ml_ops_squad")
+
+##########
+#TRAINING#
+##########
 
 train_loss_values = []
 dev_acc_values = []
-embed()
-print("Bitch")
-exit()
+
 for _ in tqdm(range(epochs), desc="Epoch"):
 
   # Training
