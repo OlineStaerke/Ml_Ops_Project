@@ -24,7 +24,7 @@ class myModel():
         self.epochs = epochs
         self.lr = lr
         self.grad_acc_steps = grad_acc_steps
-        self.model = AutoModelForSequenceClassification.from_pretrained("albert-base-v2")
+        self.model = AutoModelForSequenceClassification.from_pretrained("roberta-base")
         self.optimizer = AdamW(self.model.parameters(), lr=self.lr, eps=1e-8)
         self.device = device
         self.model.to(self.device) # Send the model to the GPU if we have one

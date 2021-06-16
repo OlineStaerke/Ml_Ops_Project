@@ -1,5 +1,5 @@
 Venv/
-data/
+data/*
 wandb/
 config/
 __pycache__/

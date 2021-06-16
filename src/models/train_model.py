@@ -22,16 +22,16 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 grad_acc_steps = 1
 model = myModel(epochs, learning_rate, grad_acc_steps, device)
 
-run.log('Epochs', epochs)
-run.log('Learning rate', learning_rate)
-run.log('Gradient accumulation steps', grad_acc_steps)
+# run.log('Epochs', epochs)
+# run.log('Learning rate', learning_rate)
+# run.log('Gradient accumulation steps', grad_acc_steps)
 ###############
 #DATA LOADING##
 ###############
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
-run.log('os', os.getcwd()) 
+# run.log('os', os.getcwd()) 
 #Import data
 train_dataloader = torch.load("../../data/processed/train.pt")
 test_set = torch.load("../../data/processed/test.pt")
@@ -47,7 +47,7 @@ wandb.watch(model.model)
 ##########
 
 train_loss = model.train(train_dataloader)
-run.log('Training loss', train_loss)
+# run.log('Training loss', train_loss)
 
 ########
 #SAVING#
@@ -55,5 +55,5 @@ run.log('Training loss', train_loss)
 
 torch.save(model.model, "../../models/model.pth")
 
-run.complete()
+# run.complete()
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 ### General options
 ### –- specify queue --
-#BSUB -q gpuv100
+#BSUB -q gpuk80
 ### -- set the job Name --
 #BSUB -J alBERT-model
 ### -- ask for number of cores (default: 1) --
@@ -22,8 +22,8 @@
 #BSUB -N
 ### -- Specify the output and error file. %J is the job-id --
 ### -- -o and -e mean append, -oo and -eo mean overwrite --
-#BSUB -oo gpu_%J.out
-#BSUB -eo gpu_%J.err
+#BSUB -oo gpu.out
+#BSUB -eo gpu.err
 # -- end of LSF options --
 
 nvidia-smi
