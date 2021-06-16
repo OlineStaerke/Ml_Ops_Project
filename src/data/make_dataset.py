@@ -10,7 +10,6 @@ import transformers
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import numpy as np
-from IPython import embed
 
 def encode_data(dataloader, max_length):
     tokenizer = AutoTokenizer.from_pretrained("roberta-base") 
@@ -84,7 +83,6 @@ def main():
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=batch_size)
     dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=batch_size)
 
-    #embed()
     #Save dataloader
     torch.save(train_dataloader,"../../data/processed/train.pt")
     torch.save(dev_dataloader,"../../data/processed/test.pt")

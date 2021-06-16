@@ -4,7 +4,7 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import numpy as np
 from tqdm import tqdm
-
+import wandb
 
 class myModel():
     # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
@@ -19,11 +19,12 @@ class myModel():
         random.seed(26)
         np.random.seed(26)
         torch.manual_seed(26)
+        torch.cuda.empty_cache()
 
         self.epochs = epochs
         self.lr = lr
         self.grad_acc_steps = grad_acc_steps
-        self.model = AutoModelForSequenceClassification.from_pretrained("albert-base-v2")
+        self.model = AutoModelForSequenceClassification.from_pretrained("roberta-base")
         self.optimizer = AdamW(self.model.parameters(), lr=self.lr, eps=1e-8)
         self.device = device
         self.model.to(self.device) # Send the model to the GPU if we have one
@@ -56,7 +57,7 @@ class myModel():
                 epoch_train_loss += loss.item()
 
                 loss.backward()
-                # wandb.log({"loss:": loss})
+                wandb.log({'outputs:': outputs})
                 
                 if (step+1) % self.grad_acc_steps == 0: # Gradient accumulation is over
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0) # Clipping gradients
