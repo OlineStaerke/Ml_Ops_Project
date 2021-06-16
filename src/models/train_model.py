@@ -7,7 +7,7 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import numpy as np
 import wandb
-#from IPython import embed
+from IPython import embed
 
 #################
 #HYPERPARAMETERS#
@@ -33,6 +33,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 # run.log('os', os.getcwd()) 
 #Import data
+embed()
 train_dataloader = torch.load("../../data/processed/train.pt")
 test_set = torch.load("../../data/processed/test.pt")
 

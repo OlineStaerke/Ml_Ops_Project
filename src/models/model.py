@@ -4,7 +4,7 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import numpy as np
 from tqdm import tqdm
-
+import wandb
 
 class myModel():
     # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
