@@ -2,3 +2,6 @@ Venv/
 data/
 wandb/
 config/
+__pycache__/
+gpu.err
+gpu.out
