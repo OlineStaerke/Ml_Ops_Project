@@ -6,13 +6,14 @@ import random
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import numpy as np
-#import wandb
+import wandb
 #from IPython import embed
 
 #################
 #HYPERPARAMETERS#
 #################
 
+wandb.init(project="ml_ops_squad")
 # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
 #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 epochs = 5
@@ -35,13 +36,11 @@ run.log('os', os.getcwd())
 train_dataloader = torch.load("../../data/processed/train.pt")
 test_set = torch.load("../../data/processed/test.pt")
 
-
 ##################
 #WEIGHTS & BIASES#
 ##################
 
-#wandb.watch(model)
-#wandb.init(project="ml_ops_squad")
+wandb.watch(model.model)
 
 ##########
 #TRAINING#
@@ -54,8 +53,6 @@ run.log('Training loss', train_loss)
 #SAVING#
 ########
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-os.chdir(dir_path)
 torch.save(model.model, "../../models/model.pth")
 
 run.complete()
