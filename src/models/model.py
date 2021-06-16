@@ -19,6 +19,7 @@ class myModel():
         random.seed(26)
         np.random.seed(26)
         torch.manual_seed(26)
+        torch.cuda.empty_cache()
 
         self.epochs = epochs
         self.lr = lr
@@ -56,7 +57,7 @@ class myModel():
                 epoch_train_loss += loss.item()
 
                 loss.backward()
-                # wandb.log({"loss:": loss})
+                wandb.log({'outputs:': outputs})
                 
                 if (step+1) % self.grad_acc_steps == 0: # Gradient accumulation is over
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0) # Clipping gradients
