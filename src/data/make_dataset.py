@@ -84,7 +84,7 @@ def main():
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=batch_size)
     dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=batch_size)
 
-    embed()
+    #embed()
     #Save dataloader
     torch.save(train_dataloader,"../../data/processed/train.pt")
     torch.save(dev_dataloader,"../../data/processed/test.pt")

@@ -13,5 +13,4 @@ transformers
 torch
 tqdm
 wandb
-
-
+azureml-sdk

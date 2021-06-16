@@ -30,16 +30,19 @@ run.log('Gradient accumulation steps', grad_acc_steps)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
-run.log('os', os.getcwd())
+run.log('os', os.getcwd()) 
 #Import data
 train_dataloader = torch.load("../../data/processed/train.pt")
 test_set = torch.load("../../data/processed/test.pt")
 
+<<<<<<< HEAD
 # TODO: This is only if you wish to work with 5 batches at a time
 # To train on 5 batches only
 indices = torch.randperm(len(train_dataloader))[:5]
 train_dataset_subset = torch.utils.data.Subset(train_dataloader, indices)
 
+=======
+>>>>>>> c9d0d67... new mdoel
 ##################
 #WEIGHTS & BIASES#
 ##################
