@@ -14,10 +14,12 @@ def test_data_size():
 
     assert len(trainloader) == 943
     assert len(testloader) == 327
-
+    
+    next_train_iteration, next_test_iteration = train_iter.next(), test_iter.next()
+    
     # Question size
-    assert train_iter.next()[0].shape and test_iter.next()[0].shape == torch.Size([10, 256])
+    assert next_train_iteration[0].shape and next_test_iteration[0].shape == torch.Size([10, 256])
     # Passage size
-    assert train_iter.next()[1].shape and test_iter.next()[1].shape == torch.Size([10, 256])
+    assert next_train_iteration[1].shape and next_test_iteration[1].shape == torch.Size([10, 256])
     # Answer size
-    assert train_iter.next()[2].shape and test_iter.next()[2].shape == torch.Size([10])
+    assert next_train_iteration[2].shape and next_test_iteration[2].shape == torch.Size([10])
