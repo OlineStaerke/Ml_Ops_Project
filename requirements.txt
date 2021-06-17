@@ -14,3 +14,4 @@ torch
 tqdm
 wandb
 azureml-sdk
+IPython
