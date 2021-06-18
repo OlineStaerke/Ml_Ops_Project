@@ -67,7 +67,9 @@ Project Organization
     - 3: run src/data/upload-data.py // This will upload the data to Azure as json files 
     - 4: Create a compute target (I used coompute clusters under compute in Azure Ml)
     - 5: run src/models/azure/train_azure.py - Remember to update the name of your compute Target and Environment // This will start an expriment run
-    - 6: After the run is complete, find the runId and insert that into src/models/azure/register_model.py
+
+- Deploying to the cloud
+    - 6: After the training run is complete, find the runId and insert that into src/models/azure/register_model.py
     - 7: Now run deploy.py, and insert your own environment name. 
     - 8: You now have a running model deployed at port 6789
     - 9: Run this from your Terminal to test: curl -X POST -d '{"this":"is a test"}' -H "Content-Type: application/json" http://localhost:6789/score
