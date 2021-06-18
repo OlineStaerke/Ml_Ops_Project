@@ -6,8 +6,13 @@ import random
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import numpy as np
-#import wandb
-#from IPython import embed
+from azureml.core import Run, Workspace, Dataset
+import joblib
+import io
+from create_dataloader import data_loader
+
+run = Run.get_context()
+ws = Workspace.from_config()
 
 #################
 #HYPERPARAMETERS#
@@ -24,6 +29,7 @@ model = myModel(epochs, learning_rate, grad_acc_steps, device)
 run.log('Epochs', epochs)
 run.log('Learning rate', learning_rate)
 run.log('Gradient accumulation steps', grad_acc_steps)
+
 ###############
 #DATA LOADING##
 ###############
@@ -31,36 +37,41 @@ run.log('Gradient accumulation steps', grad_acc_steps)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 run.log('os', os.getcwd())
-#Import data
-train_dataloader = torch.load("../../data/processed/train.pt")
-test_set = torch.load("../../data/processed/test.pt")
 
-# TODO: This is only if you wish to work with 5 batches at a time
-# To train on 5 batches only
-indices = torch.randperm(len(train_dataloader))[:5]
-train_dataset_subset = torch.utils.data.Subset(train_dataloader, indices)
+#Get datastore default
+datastore = ws.get_default_datastore()
 
-##################
-#WEIGHTS & BIASES#
-##################
+# create a dataset referencing the cloud location
+dataset_train = Dataset.Tabular.from_json_lines_files(path = [(datastore, ('data/train.json'))])
+dataset_test = Dataset.Tabular.from_json_lines_files(path = [(datastore, ('data/val.json'))])
 
-#wandb.watch(model)
-#wandb.init(project="ml_ops_squad")
+#Create dataloader objects, from pandas dataframe.
+train_dataloader, test_dataloader = data_loader(dataset_train.to_pandas_dataframe(),dataset_test.to_pandas_dataframe())
 
 ##########
 #TRAINING#
 ##########
 
-train_loss = model.train(train_dataloader)
-run.log('Training loss', train_loss)
+train_loss, eval_loss, drift_detection = model.train(train_dataloader, test_dataloader)
+run.log_list('TrainingLoss', train_loss)
+run.log_list('Eval loss', eval_loss)
+run.log_list('Drift Detection', drift_detection)
 
 ########
 #SAVING#
 ########
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-os.chdir(dir_path)
-torch.save(model.model, "../../models/model.pth")
+# Save the trained model in Azure
+model_file = 'yesno_model.pkl'
+joblib.dump(value=model.model, filename=model_file)
+run.upload_file(name = 'outputs/' + model_file, path_or_stream = './' + model_file)
 
+#complete run
 run.complete()
 
+# Register the model
+run.register_model(model_path='outputs/yesno_model.pkl', model_name='yesno_model',
+                   tags={'Training context':'Inline Training'},
+                   properties={'AUC': run.get_metrics()['TrainingLoss'], 'TrainingLoss': run.get_metrics()['TrainingLoss']})
+
+print('Model trained and registered.')

@@ -1,4 +1,5 @@
 {
     "restructuredtext.confPath": "${workspaceFolder}\\docs",
-    "python.pythonPath": "/opt/anaconda3/envs/learnpytorch/bin/python"
+    "python.pythonPath": "/opt/anaconda3/envs/learnpytorch/bin/python",
+    "azureML.defaultWorkspaceId": "/subscriptions/29d252ce-3071-47ea-9d0e-38d8513b1e27/resourceGroups/Oline_Resource/providers/Microsoft.MachineLearningServices/workspaces/Ml_Ops"
 }

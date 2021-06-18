@@ -2,13 +2,13 @@ from azureml.core import Workspace, Experiment, Environment, ScriptRunConfig, Ru
 
 if __name__ == "__main__":
     ws = Workspace.from_config()
-    experiment = Experiment(workspace=ws, name='day1')
-    config = ScriptRunConfig(source_directory='./src/models',
-                             script='train_model.py',
-                             compute_target='root')
-
+    experiment = Experiment(workspace=ws, name='day3')
+    config = ScriptRunConfig(source_directory='../../../',
+                             script='src/models/train_model.py',
+                             compute_target='ClusterGPUHigh'
+            )
     # use curated pytorch environment 
-    env = ws.environments['AzureML-PyTorch-1.6-CPU']
+    env = ws.environments['PythonEnv']
     config.run_config.environment = env
 
     run = experiment.submit(config)
