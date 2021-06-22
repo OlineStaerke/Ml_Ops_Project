@@ -50,8 +50,7 @@ class myModel():
 
                 input_ids = batch[0].to(self.device)
                 attention_masks = batch[1].to(self.device)
-                labels = batch[2].to(self.device)     
-                wandb.log({"Training Labels:": labels},step=step)
+                labels = batch[2].to(self.device)
                 outputs = self.model(input_ids, token_type_ids=None, attention_mask=attention_masks, labels=labels)
 
                 loss = outputs[0]
@@ -59,7 +58,7 @@ class myModel():
                 epoch_train_loss += loss.item()
 
                 loss.backward()
-                wandb.log({'Training Outputs:': outputs},step=step)
+                
                 
                 if (step+1) % self.grad_acc_steps == 0: # Gradient accumulation is over
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0) # Clipping gradients
@@ -67,22 +66,23 @@ class myModel():
                     self.model.zero_grad()
                 
 
-            epoch_train_loss = epoch_train_loss / len(train_dataloader)          
+            epoch_train_loss = epoch_train_loss / len(train_dataloader)      
+            wandb.log({"Epoch Training Loss : ": epoch_train_loss})    
             train_loss_values.append(epoch_train_loss)
 
             # Evaluation
             epoch_dev_accuracy = 0 # Cumulative accuracy
             self.model.eval()
 
-            for step,batch in enumerate(val_dataloader):
+            for step_val,batch in enumerate(val_dataloader):
                 
                 input_ids = batch[0].to(self.device)
                 attention_masks = batch[1].to(self.device)
                 labels = batch[2]
-                wandb.log({"Validation Labels:" : labels},step=step)   
+                 
                 with torch.no_grad():        
                     outputs = self.model(input_ids, token_type_ids=None, attention_mask=attention_masks)
-                wandb.log({"Validation outputs:" : outputs},step=step) 
+                
                 logits = outputs[0]
                 logits = logits.detach().cpu().numpy()
                 
@@ -93,7 +93,7 @@ class myModel():
                 
             epoch_dev_accuracy = epoch_dev_accuracy / len(val_dataloader)
             dev_acc_values.append(epoch_dev_accuracy)
-            wandb.log({"Epoch Accuracy:" : epoch_dev_accuracy},step=ep)
+            wandb.log({"Epoch Accuracy : " : epoch_dev_accuracy,"epoch : ": ep})
 
         return train_loss_values, dev_acc_values
 

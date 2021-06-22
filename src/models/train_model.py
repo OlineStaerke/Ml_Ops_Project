@@ -44,8 +44,8 @@ def load_data():
 def my_model_optuna(trial):
     #Get paramters from OPTUNA
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    learning_rate = trial.suggest_discrete_uniform('lr',0.0001,0.1,1)
-    epochs = int(trial.suggest_discrete_uniform('epochs',10,100,1))
+    learning_rate = trial.suggest_loguniform('lr',0.0001,0.1)
+    epochs = int(trial.suggest_discrete_uniform('epochs',5,25,1))
     optimizer =  trial.suggest_categorical('optimizer',[torch.optim.SGD, torch.optim.RMSprop, torch.optim.AdamW])
     grad_acc_steps = 1
     model = myModel(epochs, learning_rate, grad_acc_steps, device, optimizer)
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     else:
         study = optuna.create_study(direction="maximize",pruner=optuna.pruners.MedianPruner(
         n_startup_trials=5, n_warmup_steps=30, interval_steps=10))
-        study.optimize(objective, n_trials=100) 
+        study.optimize(objective, n_trials=20) 
 
         
 
