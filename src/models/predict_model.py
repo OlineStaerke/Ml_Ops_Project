@@ -36,5 +36,6 @@ for num, element in enumerate(sample[0]):
   idx = ' '.join([str(elem) for elem in element])
   q, p = lookup[idx]
   pred = predictions[num]
-  ic(p, q, pred)
+  label = labels[num]
+  ic(p, q, pred,label)
 
