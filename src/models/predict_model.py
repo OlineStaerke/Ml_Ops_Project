@@ -1,13 +1,17 @@
-import torch
+import torch, os
 from IPython import embed
 
 def predict():
-  
+
+  dir_path = os.path.dirname(os.path.realpath(__file__))
+  os.chdir(dir_path)
+  print(os.getcwd())
+
   test_dir = "../../data/processed/test.pt"
   test_dataloader = torch.load(test_dir)
-  embed()
+  sample = iter(test_dataloader).next()
   device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-  model = torch.load(model.model, "../../models/model.pth")
+  model = torch.load("../../models/model.pth")
   
   # Evaluation
   model.eval()
