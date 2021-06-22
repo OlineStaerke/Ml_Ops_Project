@@ -12,6 +12,7 @@ import hydra
 from omegaconf import DictConfig
 import logging
 import optuna
+OPTUNA=True
 ###############
 #DATA LOADING##
 ###############
@@ -20,11 +21,19 @@ def load_data():
     os.chdir(dir_path)
 
     #Import data
+    print("#######")
     print("Current directory:") #Current dorectory changes to log files when using hydra
     print(os.getcwd())
-    
-    train_dataloader = torch.load("../../../../../data/processed/train.pt")
-    test_dataloader = torch.load("../../../../../data/processed/test.pt")
+
+    if not OPTUNA:
+        train_dir = "../../../../../data/processed/train.pt"
+        test_dir = "../../../../../data/processed/test.pt"
+    else:
+        train_dir = "../../data/processed/train.pt"
+        test_dir = "../../data/processed/test.pt"
+
+    train_dataloader = torch.load(train_dir)
+    test_dataloader = torch.load(test_dir)
 
     return train_dataloader,test_dataloader
 
@@ -96,7 +105,6 @@ def train_model(model, train_dataloader, val_dataloader):
 
 
 if __name__ == "__main__":
-    OPTUNA=False
     if not OPTUNA:
         model = my_model_hydra()
     
