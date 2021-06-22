@@ -39,36 +39,36 @@ class myModel():
 
         for _ in tqdm(range(self.epochs), desc="Epoch"):
 
-        #     # Training
-        #     epoch_train_loss = 0 # Cumulative loss
-        #     self.model.train()
-        #     self.model.zero_grad()
+            # Training
+            epoch_train_loss = 0 # Cumulative loss
+            self.model.train()
+            self.model.zero_grad()
 
-        #     # tqdm is a Python library that allows you to output a smart progress bar by wrapping around any iterable
-        #     # leave ensures one continuous progress bar across all loops
-        #     for step, batch in tqdm(enumerate(train_dataloader),leave=False,total=len(train_dataloader)):
+            # tqdm is a Python library that allows you to output a smart progress bar by wrapping around any iterable
+            # leave ensures one continuous progress bar across all loops
+            for step, batch in tqdm(enumerate(train_dataloader),leave=False,total=len(train_dataloader)):
 
-        #         input_ids = batch[0].to(self.device)
-        #         attention_masks = batch[1].to(self.device)
-        #         labels = batch[2].to(self.device)     
+                input_ids = batch[0].to(self.device)
+                attention_masks = batch[1].to(self.device)
+                labels = batch[2].to(self.device)     
 
-        #         outputs = self.model(input_ids, token_type_ids=None, attention_mask=attention_masks, labels=labels)
+                outputs = self.model(input_ids, token_type_ids=None, attention_mask=attention_masks, labels=labels)
 
-        #         loss = outputs[0]
-        #         loss = loss / self.grad_acc_steps
-        #         epoch_train_loss += loss.item()
+                loss = outputs[0]
+                loss = loss / self.grad_acc_steps
+                epoch_train_loss += loss.item()
 
-        #         loss.backward()
-        #         #wandb.log({'outputs:': outputs})
+                loss.backward()
+                #wandb.log({'outputs:': outputs})
                 
-        #         if (step+1) % self.grad_acc_steps == 0: # Gradient accumulation is over
-        #             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0) # Clipping gradients
-        #             self.optimizer.step()
-        #             self.model.zero_grad()
+                if (step+1) % self.grad_acc_steps == 0: # Gradient accumulation is over
+                    torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0) # Clipping gradients
+                    self.optimizer.step()
+                    self.model.zero_grad()
                 
 
-        #     epoch_train_loss = epoch_train_loss / len(train_dataloader)          
-        #     train_loss_values.append(epoch_train_loss)
+            epoch_train_loss = epoch_train_loss / len(train_dataloader)          
+            train_loss_values.append(epoch_train_loss)
 
             # Evaluation
             epoch_dev_accuracy = 0 # Cumulative accuracy

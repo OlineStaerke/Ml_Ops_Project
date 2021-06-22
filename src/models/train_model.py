@@ -79,7 +79,9 @@ def my_model_hydra(cfg: DictConfig) -> None:
     train_dataloader, val_dataloader = load_data() #load data
     train_model(model, train_dataloader, val_dataloader) #train model
 
-
+##########
+#TRAINING#
+##########
 def train_model(model, train_dataloader, val_dataloader):
     
     ##################
@@ -88,10 +90,7 @@ def train_model(model, train_dataloader, val_dataloader):
 
     #wandb.watch(model.model)
 
-    ##########
-    #TRAINING#
-    ##########
-
+    #Train the model
     train_loss, val_acc = model.train(train_dataloader, val_dataloader )
 
     ########
