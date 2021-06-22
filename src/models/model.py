@@ -51,7 +51,7 @@ class myModel():
                 input_ids = batch[0].to(self.device)
                 attention_masks = batch[1].to(self.device)
                 labels = batch[2].to(self.device)     
-
+                wandb.log({"Training Labels:": labels})
                 outputs = self.model(input_ids, token_type_ids=None, attention_mask=attention_masks, labels=labels)
 
                 loss = outputs[0]
@@ -59,7 +59,7 @@ class myModel():
                 epoch_train_loss += loss.item()
 
                 loss.backward()
-                #wandb.log({'outputs:': outputs})
+                wandb.log({'Training Outputs:': outputs})
                 
                 if (step+1) % self.grad_acc_steps == 0: # Gradient accumulation is over
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0) # Clipping gradients
@@ -79,10 +79,10 @@ class myModel():
                 input_ids = batch[0].to(self.device)
                 attention_masks = batch[1].to(self.device)
                 labels = batch[2]
-                            
+                wandb.log({"Validation Labels:" : labels})   
                 with torch.no_grad():        
                     outputs = self.model(input_ids, token_type_ids=None, attention_mask=attention_masks)
-                                
+                wandb.log({"Validation outputs:" : outputs}) 
                 logits = outputs[0]
                 logits = logits.detach().cpu().numpy()
                 
@@ -90,9 +90,10 @@ class myModel():
                 labels = labels.numpy().flatten()
                 
                 epoch_dev_accuracy += np.sum(predictions == labels) / len(labels)
-
+                
             epoch_dev_accuracy = epoch_dev_accuracy / len(val_dataloader)
             dev_acc_values.append(epoch_dev_accuracy)
+            wandb.log({"Epoch Accuracy:" : epoch_dev_accuracy})
 
         return train_loss_values, dev_acc_values
 

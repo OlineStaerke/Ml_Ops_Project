@@ -13,6 +13,7 @@ from omegaconf import DictConfig
 import logging
 import optuna
 OPTUNA=True
+wandb.init("Ml_Ops_Squad")
 ###############
 #DATA LOADING##
 ###############
@@ -48,11 +49,12 @@ def my_model_optuna(trial):
     optimizer =  trial.suggest_categorical('optimizer',[torch.optim.SGD, torch.optim.RMSprop, torch.optim.AdamW])
     grad_acc_steps = 1
     model = myModel(epochs, learning_rate, grad_acc_steps, device, optimizer)
-
+    wandb.watch(model)
     return model
     
 def objective(trial):
     model = my_model_optuna(trial)
+    wandb.watch(model)
     train_dataloader, val_dataloader = load_data() #load data
     return(train_model(model, train_dataloader, val_dataloader)) #train model, returns val accuracy
 
@@ -76,6 +78,7 @@ def my_model_hydra(cfg: DictConfig) -> None:
     grad_acc_steps = cfg.grad_acc_steps
 
     model = myModel(epochs, learning_rate, grad_acc_steps, device) #init model
+    wandb.watch(model)
     train_dataloader, val_dataloader = load_data() #load data
     train_model(model, train_dataloader, val_dataloader) #train model
 
@@ -88,7 +91,7 @@ def train_model(model, train_dataloader, val_dataloader):
     #WEIGHTS & BIASES#
     ##################
 
-    #wandb.watch(model.model)
+    
 
     #Train the model
     train_loss, val_acc = model.train(train_dataloader, val_dataloader )
@@ -106,6 +109,7 @@ def train_model(model, train_dataloader, val_dataloader):
 if __name__ == "__main__":
     if not OPTUNA:
         model = my_model_hydra()
+        wandb.watch(model)
     
     else:
         study = optuna.create_study(direction="maximize",pruner=optuna.pruners.MedianPruner(
