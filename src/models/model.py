@@ -67,7 +67,7 @@ class myModel():
                 
 
             epoch_train_loss = epoch_train_loss / len(train_dataloader)      
-            wandb.log({"Epoch Training Loss : ": epoch_train_loss})    
+            # wandb.log({"Epoch Training Loss : ": epoch_train_loss})    
             train_loss_values.append(epoch_train_loss)
 
             # Evaluation
@@ -93,7 +93,7 @@ class myModel():
                 
             epoch_dev_accuracy = epoch_dev_accuracy / len(val_dataloader)
             dev_acc_values.append(epoch_dev_accuracy)
-            wandb.log({"Epoch Accuracy : " : epoch_dev_accuracy,"epoch : ": ep})
+            # wandb.log({"Epoch Accuracy : " : epoch_dev_accuracy,"epoch : ": ep})
 
         return train_loss_values, dev_acc_values
 

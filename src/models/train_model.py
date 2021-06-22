@@ -12,18 +12,20 @@ import hydra
 from omegaconf import DictConfig
 import logging
 import optuna
-OPTUNA=True
-wandb.init("Ml_Ops_Squad")
+
+OPTUNA = True
 ###############
-#DATA LOADING##
+# DATA LOADING##
 ###############
 def load_data():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(dir_path)
 
-    #Import data
+    # Import data
     print("#######")
-    print("Current directory:") #Current dorectory changes to log files when using hydra
+    print(
+        "Current directory:"
+    )  # Current dorectory changes to log files when using hydra
     print(os.getcwd())
 
     if not OPTUNA:
@@ -36,67 +38,97 @@ def load_data():
     train_dataloader = torch.load(train_dir)
     test_dataloader = torch.load(test_dir)
 
-    return train_dataloader,test_dataloader
+    return train_dataloader, test_dataloader
+
 
 ########
-#OPTUNA#
+# OPTUNA#
 ########
 def my_model_optuna(trial):
-    #Get paramters from OPTUNA
+    # Get paramters from OPTUNA
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    learning_rate = trial.suggest_loguniform('lr',0.0001,0.1)
-    epochs = int(trial.suggest_discrete_uniform('epochs',5,25,1))
-    optimizer =  trial.suggest_categorical('optimizer',[torch.optim.SGD, torch.optim.RMSprop, torch.optim.AdamW])
-    grad_acc_steps = 1
+
     model = myModel(epochs, learning_rate, grad_acc_steps, device, optimizer)
-    wandb.watch(model.model)
+    # wandb.watch(model.model)
     return model
-    
-def objective(trial):
-    model = my_model_optuna(trial)
-    train_dataloader, val_dataloader = load_data() #load data
-    return(train_model(model, train_dataloader, val_dataloader)) #train model, returns val accuracy
+
+
+# def objective(trial):
+#     model = my_model_optuna(trial)
+#     train_dataloader, val_dataloader = load_data() #load data
+#     return(train_model(model, train_dataloader, val_dataloader)) #train model, returns val accuracy
+
+
+class Objective(object):
+    def __init__(self):
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    def __call__(self, trial):
+        learning_rate = trial.suggest_loguniform("lr", 0.0001, 0.1)
+        epochs = int(trial.suggest_discrete_uniform("epochs", 5, 25, 1))
+        optimizer = trial.suggest_categorical(
+            "optimizer", [torch.optim.SGD, torch.optim.RMSprop, torch.optim.AdamW]
+        )
+        grad_acc_steps = 1
+        config = {
+            "Learning Rate : ": learning_rate,
+            "Epochs : ": epochs,
+            "Optimizer : ": optimizer,
+        }
+        run = wandb.init(
+            project="HyperParameters",
+            name=f"trial",
+            group="sampling",
+            config=config,
+            reinit=True,
+        )
+        model = myModel(epochs, learning_rate, grad_acc_steps, self.device, optimizer)
+        train_dataloader, val_dataloader = load_data()  # load data
+        val_acc = train_model(model, train_dataloader, val_dataloader)
+
+        with run:
+            run.log({"Validation Accuracy : ": val_acc}, step=trial.number)
+        return val_acc  # train model, returns val accuracy
 
 
 #################
-#HYPERPARAMETERS#
+# HYPERPARAMETERS#
 #################
-@hydra.main(config_path="../../", config_name = "config.yaml")
+@hydra.main(config_path="../../", config_name="config.yaml")
 def my_model_hydra(cfg: DictConfig) -> None:
-    #Log in hydra the params
+    # Log in hydra the params
     log = logging.getLogger(__name__)
     log.info(cfg)
 
-    #wandb.init(project="ml_ops_squad")
+    # wandb.init(project="ml_ops_squad")
     # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
-    #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     epochs = cfg.epochs
     learning_rate = cfg.lr
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     grad_acc_steps = cfg.grad_acc_steps
 
-    model = myModel(epochs, learning_rate, grad_acc_steps, device) #init model
-    wandb.watch(model.model)
-    train_dataloader, val_dataloader = load_data() #load data
-    train_model(model, train_dataloader, val_dataloader) #train model
+    model = myModel(epochs, learning_rate, grad_acc_steps, device)  # init model
+    # wandb.watch(model.model)
+    train_dataloader, val_dataloader = load_data()  # load data
+    train_model(model, train_dataloader, val_dataloader)  # train model
+
 
 ##########
-#TRAINING#
+# TRAINING#
 ##########
 def train_model(model, train_dataloader, val_dataloader):
-    
+
     ##################
-    #WEIGHTS & BIASES#
+    # WEIGHTS & BIASES#
     ##################
 
-    
-
-    #Train the model
-    train_loss, val_acc = model.train(train_dataloader, val_dataloader )
+    # Train the model
+    train_loss, val_acc = model.train(train_dataloader, val_dataloader)
 
     ########
-    #SAVING#
+    # SAVING#
     ########
 
     torch.save(model.model, "../../models/model.pth")
@@ -104,16 +136,18 @@ def train_model(model, train_dataloader, val_dataloader):
     return val_acc[-1]
 
 
-
 if __name__ == "__main__":
     if not OPTUNA:
         model = my_model_hydra()
-        wandb.watch(model)
-    
+
     else:
-        study = optuna.create_study(direction="maximize",pruner=optuna.pruners.MedianPruner(
-        n_startup_trials=5, n_warmup_steps=30, interval_steps=10))
-        study.optimize(objective, n_trials=20) 
 
         
-
+        objective = Objective()
+        study = optuna.create_study(
+            direction="maximize",
+            pruner=optuna.pruners.MedianPruner(
+                n_startup_trials=5, n_warmup_steps=30, interval_steps=10
+            ),
+        )
+        study.optimize(objective, n_trials=20)
