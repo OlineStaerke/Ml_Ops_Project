@@ -148,6 +148,15 @@ if __name__ == "__main__":
             direction="maximize",
             pruner=optuna.pruners.MedianPruner(
                 n_startup_trials=5, n_warmup_steps=30, interval_steps=10
-            ),
+            )
         )
         study.optimize(objective, n_trials=20)
+        summary = wandb.init(project="HyperParameters",
+                             name="summary",
+                             job_type="logging")
+        trials = study.trials
+        for step,trial in enumerate(trials):
+            summary.log({"Validation Accuracy : ": trial.value},step=step)
+            for k, v in trial.params.items():
+                summary.log({k: v},step=step)
+                
