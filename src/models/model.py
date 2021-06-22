@@ -26,7 +26,7 @@ class myModel():
         self.lr = lr
         self.grad_acc_steps = grad_acc_steps
         self.model = AutoModelForSequenceClassification.from_pretrained("roberta-base")
-        self.optimizer = optimizer(self.model.parameters(), lr=self.lr, eps=1e-8)
+        self.optimizer = optimizer(self.model.parameters(), lr=self.lr)#, eps=1e-8)
         self.device = device
         self.model.to(self.device) # Send the model to the GPU if we have one
   
@@ -37,7 +37,7 @@ class myModel():
         dev_acc_values = []
         
 
-        for _ in tqdm(range(self.epochs), desc="Epoch"):
+        for ep,_ in enumerate(tqdm(range(self.epochs), desc="Epoch")):
 
             # Training
             epoch_train_loss = 0 # Cumulative loss
@@ -51,7 +51,7 @@ class myModel():
                 input_ids = batch[0].to(self.device)
                 attention_masks = batch[1].to(self.device)
                 labels = batch[2].to(self.device)     
-                wandb.log({"Training Labels:": labels})
+                wandb.log({"Training Labels:": labels},step=step)
                 outputs = self.model(input_ids, token_type_ids=None, attention_mask=attention_masks, labels=labels)
 
                 loss = outputs[0]
@@ -59,7 +59,7 @@ class myModel():
                 epoch_train_loss += loss.item()
 
                 loss.backward()
-                wandb.log({'Training Outputs:': outputs})
+                wandb.log({'Training Outputs:': outputs},step=step)
                 
                 if (step+1) % self.grad_acc_steps == 0: # Gradient accumulation is over
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0) # Clipping gradients
@@ -74,15 +74,15 @@ class myModel():
             epoch_dev_accuracy = 0 # Cumulative accuracy
             self.model.eval()
 
-            for batch in val_dataloader:
+            for step,batch in enumerate(val_dataloader):
                 
                 input_ids = batch[0].to(self.device)
                 attention_masks = batch[1].to(self.device)
                 labels = batch[2]
-                wandb.log({"Validation Labels:" : labels})   
+                wandb.log({"Validation Labels:" : labels},step=step)   
                 with torch.no_grad():        
                     outputs = self.model(input_ids, token_type_ids=None, attention_mask=attention_masks)
-                wandb.log({"Validation outputs:" : outputs}) 
+                wandb.log({"Validation outputs:" : outputs},step=step) 
                 logits = outputs[0]
                 logits = logits.detach().cpu().numpy()
                 
@@ -93,7 +93,7 @@ class myModel():
                 
             epoch_dev_accuracy = epoch_dev_accuracy / len(val_dataloader)
             dev_acc_values.append(epoch_dev_accuracy)
-            wandb.log({"Epoch Accuracy:" : epoch_dev_accuracy})
+            wandb.log({"Epoch Accuracy:" : epoch_dev_accuracy},step=ep)
 
         return train_loss_values, dev_acc_values
 

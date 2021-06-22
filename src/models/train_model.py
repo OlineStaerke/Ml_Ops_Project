@@ -49,12 +49,11 @@ def my_model_optuna(trial):
     optimizer =  trial.suggest_categorical('optimizer',[torch.optim.SGD, torch.optim.RMSprop, torch.optim.AdamW])
     grad_acc_steps = 1
     model = myModel(epochs, learning_rate, grad_acc_steps, device, optimizer)
-    wandb.watch(model)
+    wandb.watch(model.model)
     return model
     
 def objective(trial):
     model = my_model_optuna(trial)
-    wandb.watch(model)
     train_dataloader, val_dataloader = load_data() #load data
     return(train_model(model, train_dataloader, val_dataloader)) #train model, returns val accuracy
 
@@ -78,7 +77,7 @@ def my_model_hydra(cfg: DictConfig) -> None:
     grad_acc_steps = cfg.grad_acc_steps
 
     model = myModel(epochs, learning_rate, grad_acc_steps, device) #init model
-    wandb.watch(model)
+    wandb.watch(model.model)
     train_dataloader, val_dataloader = load_data() #load data
     train_model(model, train_dataloader, val_dataloader) #train model
 
