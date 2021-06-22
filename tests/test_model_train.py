@@ -7,13 +7,17 @@ from src.models.model import myModel
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
+class VariablesChangeException(Exception):
+    pass
+
+
 # TODO: Setup the test correctly to check for a change of variables when training the model
 @pytest.fixture
 def setup():
     
     # Import model and optimiser
     model = myModel()
-    optimizer = AdamW(model.parameters(), lr=1e-5, eps=1e-8)
+    optimizer = AdamW(model.model.parameters(), lr=1e-5, eps=1e-8)
 
     # Import data
     train_set = torch.load("../data/processed/train.pt")
@@ -22,22 +26,22 @@ def setup():
     # Setting up iterator
     train_iter = iter(train_set)
     test_iter = iter(test_set)
-    print(len(train_iter.next()))
-    batch = [train_iter.next()[0], train_iter.next()[1], train_iter.next()[3]]
-    return model, optim, batch
+    next_train_iter = train_iter.next()
+    batch = [next_train_iter[0], next_train_iter[1], next_train_iter[2]]
+    return model, optimizer, batch
 
 
-@pytest.fixture
 def _train_step(model, optim, batch):
     
     # Put model in training mode
-    model.train()
+    model.epochs = 1
+    model.model.train()
 
     # Run one forward + backward step 
     optim.zero_grad()
     inputs, attention_masks, labels = batch[0], batch[1], batch[2]
 
-    output = model(inputs, token_type_ids=None, attention_masks=attention_masks, labels=labels)
+    output = model.model(inputs, token_type_ids=None, attention_mask=attention_masks, labels=labels)
     loss = output[0]
     loss.backward()
     optim.step()
@@ -59,16 +63,13 @@ def _forward_step(model, batch):
 def test_var_change(setup):
 
     model, optimizer, batch = setup
-
-    # Get a list of params that are allowed to change
-    if params is None:
-        params = [np for np in model.named_parameters() if np[1].requires_grad]
     
     # Take a copy
-    initial_params = [(name, p.clone()) for (name, p) in params]
-
+    initial_params = [ np for np in model.model.named_parameters() if np[1].requires_grad ]
     # Run a training step
-    _train_step(model, optim, batch)
+    _train_step(model, optimizer, batch)
+
+    params = [ np for np in model.model.named_parameters() if np[1].requires_grad ]
 
     for (_, p0), (name, p1) in zip(initial_params, params):
         try:
