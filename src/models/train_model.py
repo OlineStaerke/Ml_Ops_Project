@@ -8,53 +8,62 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Adam
 import numpy as np
 import wandb
 from IPython import embed
+import hydra
+from omegaconf import DictConfig
+import logging
 
 #################
 #HYPERPARAMETERS#
 #################
+@hydra.main(config_path="../../", config_name = "config.yaml")
+def my_app(cfg: DictConfig) -> None:
+    #Log in hydra the params
+    log = logging.getLogger(__name__)
+    log.info(cfg)
+    
 
-wandb.init(project="ml_ops_squad")
-# Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
-#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epochs = 5
-learning_rate = 1e-5
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-grad_acc_steps = 1
-model = myModel(epochs, learning_rate, grad_acc_steps, device)
+    #wandb.init(project="ml_ops_squad")
+    # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
+    #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# run.log('Epochs', epochs)
-# run.log('Learning rate', learning_rate)
-# run.log('Gradient accumulation steps', grad_acc_steps)
-###############
-#DATA LOADING##
-###############
+    epochs = cfg.epochs
+    learning_rate = cfg.lr
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    grad_acc_steps = cfg.grad_acc_steps
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-os.chdir(dir_path)
-# run.log('os', os.getcwd()) 
-#Import data
-embed()
-train_dataloader = torch.load("../../data/processed/train.pt")
-test_set = torch.load("../../data/processed/test.pt")
+    model = myModel(epochs, learning_rate, grad_acc_steps, device)
 
-##################
-#WEIGHTS & BIASES#
-##################
+    ###############
+    #DATA LOADING##
+    ###############
 
-wandb.watch(model.model)
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(dir_path)
 
-##########
-#TRAINING#
-##########
+    #Import data
+    print("Current directory:") #Current dorectory changes to log files when using hydra
+    print(os.getcwd())
+    
+    train_dataloader = torch.load("../../../../../data/processed/train.pt")
+    test_set = torch.load("../../../../../data/processed/test.pt")
 
-train_loss = model.train(train_dataloader)
-# run.log('Training loss', train_loss)
+    ##################
+    #WEIGHTS & BIASES#
+    ##################
 
-########
-#SAVING#
-########
+    #wandb.watch(model.model)
 
-torch.save(model.model, "../../models/model.pth")
+    ##########
+    #TRAINING#
+    ##########
 
-# run.complete()
+    train_loss = model.train(train_dataloader)
+    ########
+    #SAVING#
+    ########
 
+    torch.save(model.model, "../../models/model.pth")
+
+
+if __name__ == "__main__":
+    my_app()

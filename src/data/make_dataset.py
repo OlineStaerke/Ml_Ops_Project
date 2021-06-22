@@ -50,8 +50,8 @@ def main():
     
   
     #Save raw data
-    #torch.save(train_dataset,"../../data/raw/train.pt")
-    #torch.save(validation_dataset,"../../data/raw/test.pt")
+    torch.save(train_dataset,"../../data/raw/train.pt")
+    torch.save(validation_dataset,"../../data/raw/test.pt")
 
     logger.info('> Encoding raw data')
     max_seq_length = 256
