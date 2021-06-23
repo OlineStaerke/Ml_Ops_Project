@@ -1,9 +1,13 @@
 ML Operations Project at DTU Compute.
 
-S164472 Helena Hansen 
+S164472 Helena Hansen
+
 S165352 Matthias Adamsen
+
 S174398 Natasha Klingenbrunn 
+
 S174388 Oline Stærke 
+
 S174450 Simon Larsen
 
 ==============================
