@@ -75,3 +75,9 @@ This has all been added to Azure_branch and only works from here.
     - 7: Now run deploy.py, and insert your own environment name. 
     - 8: You now have a running model deployed at port 6789
     - 9: Run this from your Terminal to test: curl -X POST -d '{"this":"is a test"}' -H "Content-Type: application/json" http://localhost:6789/score
+
+## OPTUNA 
+Optuna is used to do opimization of hyperparameters. 
+A method is added to train_model.py, where variable OPTUNA needs to be set to TRUE, if wanting to do hyperparameter optimization.
+
+If OPTUNA == False, Hydra is used instead to load the hyperparameters.
