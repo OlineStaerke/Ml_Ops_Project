@@ -5,6 +5,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Adam
 import numpy as np
 from tqdm import tqdm
 import wandb
+import torchdrift
 
 class myModel():
     # Use a GPU if you have one available (Runtime -> Change runtime type -> GPU)
@@ -31,7 +32,7 @@ class myModel():
   
 
     def train(self, train_dataloader, val_dataloader=None, with_wandb=True):
-
+        drift_detector = torchdrift.detectors.KernelMMDDriftDetector()
         train_loss_values = []
         dev_acc_values = []
         
@@ -70,6 +71,8 @@ class myModel():
             epoch_train_loss = epoch_train_loss / len(train_dataloader)          
             train_loss_values.append(epoch_train_loss)
 
+            drift_detection = []
+
             if val_dataloader is not None:
                 # Evaluation
                 epoch_dev_accuracy = 0 # Cumulative accuracy
@@ -91,6 +94,14 @@ class myModel():
                     labels = labels.numpy().flatten()
                     
                     epoch_dev_accuracy += np.sum(predictions == labels) / len(labels)
+
+
+
+
+                    #DRIFT DETECTION
+                    # score = drift_detector(outputs)
+                    # p_val = drift_detector.compute_p_value(outputs)
+                    # drift_detection.append([(score,p_val)])
                     
                 epoch_dev_accuracy = epoch_dev_accuracy / len(val_dataloader)
                 dev_acc_values.append(epoch_dev_accuracy)
