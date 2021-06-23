@@ -22,6 +22,7 @@ def encode_data(dataloader, max_length):
     attention_masks = []
 
     for values in dataloader:
+        print(values)
         question = values['question']
         passage = values['passage']
         
@@ -50,6 +51,8 @@ def main():
     logger.info('> Loading Dataset')
     train_dataset = load_dataset("boolq",split="train")
     validation_dataset = load_dataset("boolq",split="validation")
+
+    print(train_dataset)
     
 
     logger.info('> Encoding raw data')
@@ -86,7 +89,7 @@ def main():
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=batch_size)
     dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=batch_size)
 
-    embed()
+    #embed()
     #Save dataloader
     torch.save(train_dataloader,"../../data/processed/train.pt")
     torch.save(dev_dataloader,"../../data/processed/test.pt")
