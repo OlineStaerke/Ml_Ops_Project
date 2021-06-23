@@ -45,13 +45,13 @@ def load_data():
 ########
 # OPTUNA#
 ########
-def my_model_optuna(trial):
-    # Get paramters from OPTUNA
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# def my_model_optuna(trial):
+#     # Get paramters from OPTUNA
+#     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = myModel(epochs, learning_rate, grad_acc_steps, device, optimizer)
-    # wandb.watch(model.model)
-    return model
+#     model = myModel(epochs, learning_rate, grad_acc_steps, device, optimizer)
+#     # wandb.watch(model.model)
+#     return model
 
 
 # def objective(trial):
