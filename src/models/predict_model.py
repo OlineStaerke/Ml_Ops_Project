@@ -20,7 +20,7 @@ model.eval()
 input_ids = sample[0].to(device)
 attention_masks = sample[1].to(device)
 labels = sample[2]
-
+embed()
 with torch.no_grad():        
     outputs = model(input_ids, token_type_ids=None, attention_mask=attention_masks)
 
