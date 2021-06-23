@@ -34,4 +34,4 @@ module load cuda/10.2
 cd 
 cd Ml_Ops_Project 
 source Venv/bin/activate
-python3 src/models/train_model.py
+python3 src/models/train_model_optuna.py
