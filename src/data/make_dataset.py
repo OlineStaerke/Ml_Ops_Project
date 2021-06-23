@@ -17,6 +17,7 @@ def encode_data(dataloader, max_length):
     """Encode the question/passage pairs into features than can be fed to the model."""
     input_ids = []
     attention_masks = []
+    lookup = {}
 
     for values in dataloader:
         question = values['question']
@@ -29,9 +30,11 @@ def encode_data(dataloader, max_length):
 
         input_ids.append(encoded_pair)
         attention_masks.append(attention_mask)
+        idx = ' '.join([str(elem) for elem in encoded_pair])
+        lookup[idx] = (question, passage)
         
 
-    return np.array(input_ids), np.array(attention_masks)
+    return np.array(input_ids), np.array(attention_masks), lookup
 
 
 
@@ -48,16 +51,13 @@ def main():
     train_dataset = load_dataset("boolq",split="train")
     validation_dataset = load_dataset("boolq",split="validation")
     
-  
-    #Save raw data
-    torch.save(train_dataset,"../../data/raw/train.pt")
-    torch.save(validation_dataset,"../../data/raw/test.pt")
+
 
     logger.info('> Encoding raw data')
     max_seq_length = 256
-    input_ids_train, attention_masks_train = encode_data(train_dataset,max_seq_length)
+    input_ids_train, attention_masks_train, _ = encode_data(train_dataset,max_seq_length)
     answers_train = np.array([int(a) for a in train_dataset['answer']])
-    input_ids_dev, attention_masks_dev = encode_data(validation_dataset,max_seq_length)
+    input_ids_dev, attention_masks_dev, lookup = encode_data(validation_dataset,max_seq_length)
     answers_dev = np.array([int(a) for a in validation_dataset['answer']])
 
     train_features = (input_ids_train, attention_masks_train, answers_train)
@@ -77,6 +77,10 @@ def main():
     train_dataset = TensorDataset(*train_features_tensors)
     dev_dataset = TensorDataset(*dev_features_tensors)
 
+    #Save raw data
+    torch.save(train_dataset,"../../data/raw/train.pt")
+    torch.save(dev_dataset,"../../data/raw/test.pt")
+
     train_sampler = RandomSampler(train_dataset)
     dev_sampler = SequentialSampler(dev_dataset)
 
@@ -84,6 +88,7 @@ def main():
     dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=batch_size)
 
     #Save dataloader
+    torch.save(lookup, "../../data/processed/test_lookup.pt")
     torch.save(train_dataloader,"../../data/processed/train.pt")
     torch.save(dev_dataloader,"../../data/processed/test.pt")
 
