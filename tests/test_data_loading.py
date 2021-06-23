@@ -1,13 +1,22 @@
 import pytest
 import torch
+from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
 def test_data_size():
 
-    trainloader = torch.load("../data/processed/train.pt")
-    testloader = torch.load("../data/processed/test.pt")
+    train_dataset = torch.load("../data/raw/train.pt")
+    dev_dataset = torch.load("../data/raw/test.pt")
+
+    train_sampler = RandomSampler(train_dataset)
+    dev_sampler = SequentialSampler(dev_dataset)
+
+    trainloader = DataLoader(
+        train_dataset, sampler=train_sampler, batch_size=10)
+    testloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=10)
+
 
     train_iter = iter(trainloader)
     test_iter = iter(testloader)
