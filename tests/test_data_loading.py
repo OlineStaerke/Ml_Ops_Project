@@ -1,9 +1,16 @@
-import pytest
 import torch
+import pytest
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 import os
+import time
+from src.data import make_dataset
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
+
+@pytest.fixture
+def setup():
+
+    make_dataset.main()
 
 def test_data_size():
 
