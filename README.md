@@ -59,7 +59,7 @@ Project Organization
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
 
-#How to use our model in Azure
+# How to use our model in Azure
 Azure Machine Learning can be used for any kind of machine learning. You can do training, validation and deployment of any machine learning model in Azure. 
 This has all been added to Azure_branch and only works from here.
 
