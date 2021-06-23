@@ -81,3 +81,6 @@ Optuna is used to do opimization of hyperparameters.
 A method is added to train_model.py, where variable OPTUNA needs to be set to TRUE, if wanting to do hyperparameter optimization.
 
 If OPTUNA == False, Hydra is used instead to load the hyperparameters.
+
+## Weights & Biases
+Weights and biases, or wandb for short, is a logging tool to track the progress of model training. We have used it to track individually the performance of one batch of hyperparameters, aswell as a hyperparameter tuning study using Optuna. Wandb has an inbuilt hyperparameter sweep tool, but we focused on Optuna before deciding wandb was the logging tool we wanted to use. Thus, we had to be creative in how to write the optuna study so that the hyperparameter plot was created properly.
