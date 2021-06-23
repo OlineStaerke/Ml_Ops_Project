@@ -38,4 +38,5 @@ azureml-train==1.31.0
 azureml-train-automl-client==1.31.0
 azureml-train-core==1.31.0
 azureml-train-restclients-hyperdrive==1.31.0
+azureml-sdk
 IPython
