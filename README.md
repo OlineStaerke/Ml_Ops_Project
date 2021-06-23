@@ -1,11 +1,20 @@
-ML
-==============================
-
 ML Operations Project at DTU Compute.
 
+S164472 Helena Hansen 
+S165352 Matthias Adamsen
+S174398 Natasha Klingenbrunn 
+S174388 Oline Stærke 
+S174450 Simon Larsen
+
+==============================
+
 This model is inspired by Vincent Micheli's Article [Deep Learning has (almost) all the answers: Yes/No Question Answering with Transformers](https://medium.com/illuin/deep-learning-has-almost-all-the-answers-yes-no-question-answering-with-transformers-223bebb70189)
-Small change
-Project Organization
+
+About this project:
+- BoolQ is a reading comprehension dataset composed of a question, a passage and a yes/no answer. The goal is to answer the yes/no question based on the context of the passage.
+- The RoBERTa model is built on top of the BERT model for NLP tasks. RoBERTa differs from BERT in terms of dynamic masking, larger batch sizes and longer pretraining, amongst other changes. This improved model has demonstrated better performance than BERT on many key NLP tasks, such as the GLUE Benchmark.
+- We will us RoBERTa on the BoolQ dataset with a robust full-scale Deep Learning Framework, following good coding practices as per the MLOps coursework. 
+
 ------------
 
     ├── LICENSE
@@ -79,14 +88,11 @@ This has all been added to Azure_branch and only works from here.
 ## OPTUNA 
 Optuna is used to do opimization of hyperparameters. 
 A method is added to train_model.py, where variable OPTUNA needs to be set to TRUE, if wanting to do hyperparameter optimization.
-
 If OPTUNA == False, Hydra is used instead to load the hyperparameters.
 
 
-
-
 ## Weights & Biases
-Weights and biases, or wandb for short, is a logging tool to track the progress of model training. We have used it to track individually the performance of one batch of hyperparameters, aswell as a hyperparameter tuning study using Optuna. Wandb has an inbuilt hyperparameter sweep tool, but we focused on Optuna before deciding wandb was the logging tool we wanted to use. Thus, we had to be creative in how to write the optuna study so that the hyperparameter plot was created properly.
+Weights and biases, or wandb for short, is a logging tool to track the progress of model training. We have used it to track individually the performance of one batch of hyperparameters, as well as a hyperparameter tuning study using Optuna. Wandb has an inbuilt hyperparameter sweep tool, but we focused on Optuna before deciding wandb was the logging tool we wanted to use. Thus, we had to be creative in how to write the optuna study so that the hyperparameter plot was created properly.
 
 ## Data Drifting
 Data Drifting is one of the main reasons model accuracy decreases over time. Therefore, it is good practice to implement a drift detection method to monitor the data . Here, the TorchDrift implementation is added to the model.py but not used, due to time constraints. Drift Detection is measured in terms of score and p-value when using the TrochDrift.   
