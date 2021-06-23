@@ -1,21 +1,17 @@
 from random import shuffle
-import pytest
 import torch
-from torch import nn, optim
+import pytest
 from torch.utils.data import DataLoader, random_split
 import os
 from transformers import AdamW
+from src.data import make_dataset
 from src.models.model import myModel
-import numpy as np
-from IPython import embed
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
 class VariablesChangeException(Exception):
     pass
 
-
-# TODO: Setup the test correctly to check for a change of variables when training the model
 @pytest.fixture
 def setup():
     

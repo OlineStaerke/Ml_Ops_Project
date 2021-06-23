@@ -7,13 +7,9 @@ from src.data import make_dataset
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
-def setup():
-
-    make_dataset.main()
 
 def test_data_size():
 
-    setup()
     train_dataset = torch.load("../data/raw/train.pt")
     dev_dataset = torch.load("../data/raw/test.pt")
 
