@@ -51,10 +51,7 @@ def main():
     train_dataset = load_dataset("boolq",split="train")
     validation_dataset = load_dataset("boolq",split="validation")
     
-  
-    #Save raw data
-    torch.save(train_dataset,"../../data/raw/train.pt")
-    torch.save(validation_dataset,"../../data/raw/test.pt")
+
 
     logger.info('> Encoding raw data')
     max_seq_length = 256
@@ -79,6 +76,10 @@ def main():
 
     train_dataset = TensorDataset(*train_features_tensors)
     dev_dataset = TensorDataset(*dev_features_tensors)
+
+    #Save raw data
+    torch.save(train_dataset,"../../data/raw/train.pt")
+    torch.save(dev_dataset,"../../data/raw/test.pt")
 
     train_sampler = RandomSampler(train_dataset)
     dev_sampler = SequentialSampler(dev_dataset)
