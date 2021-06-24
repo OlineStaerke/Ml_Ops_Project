@@ -102,4 +102,4 @@ The project is covered by a python continuous integration building framework, pr
 
 ## Meme
 
-![Meme](/jphwuu0wk8w61.JPG)
+![jphwuu0wk8w61](https://user-images.githubusercontent.com/49098682/123227871-4a069500-d4d5-11eb-9a24-ffd38c87a7da.jpg)
