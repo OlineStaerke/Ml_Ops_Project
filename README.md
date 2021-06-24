@@ -98,4 +98,4 @@ Weights and biases, or wandb for short, is a logging tool to track the progress 
 Data Drifting is one of the main reasons model accuracy decreases over time. Therefore, it is good practice to implement a drift detection method to monitor the data . Here, the TorchDrift implementation is added to the model.py but not used, due to time constraints. Drift Detection is measured in terms of score and p-value when using the TrochDrift.   
 
 ## Continuous Integration
-The porject is covered by a python continuous integration building framework, provided by GitHub. Additionally, Unit Tests making sure that data is properly loaded as expected and training is done properly.
+The project is covered by a python continuous integration building framework, provided by GitHub. Additionally, Unit Tests making sure that data is properly loaded as expected and training is done properly.
