@@ -60,7 +60,13 @@ Project Organization
 
 
 
-#How to use our model in Azure
+
+
+
+## How to use our model in Azure
+Azure Machine Learning can be used for any kind of machine learning. You can do training, validation and deployment of any machine learning model in Azure. 
+
+
 -  Training in the Cloud
     - 1: Insert credentials in config.json (Create a workspace before in AzureMl)
     - 2: Create a compute target and an environment (I created a Python env containing the env.txt script)
@@ -73,3 +79,7 @@ Project Organization
     - 7: Now run deploy.py, and insert your own environment name. 
     - 8: You now have a running model deployed at port 6789
     - 9: Run this from your Terminal to test: curl -X POST -d '{"this":"is a test"}' -H "Content-Type: application/json" http://localhost:6789/score
+
+## OPTUNA 
+Optuna is used to do opimization of hyperparameters. 
+A method is added 

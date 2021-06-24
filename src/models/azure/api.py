@@ -4,6 +4,7 @@ import numpy as np
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AdamW
 import os
 import joblib
+import torch
 
 
 def encode_data(values, max_length):
@@ -59,17 +60,17 @@ def predict(model, input_ids, attention_masks):
 
 
 def init():
-    # global model
-    # print("This is init")
-    # model_path = Model.get_model_path('yesno_model')
-    # model = joblib.load(model_path)
-
     global model
+    # print("This is init")
+    model_path = Model.get_model_path('yesno_model')
+    model = joblib.load(model_path)
+
+    #global model
     # AZUREML_MODEL_DIR is an environment variable created during deployment.
     # It is the path to the model folder (./azureml-models/$MODEL_NAME/$VERSION)
     # For multiple models, it points to the folder containing all deployed models (./azureml-models)
-    model_path = os.path.join(os.getenv('./azureml-models/yesno_model/'), 'yesno_model.pkl')
-    model = joblib.load(model_path)
+    #model_path = os.path.join(os.getenv('./azureml-models/yesno_model/'), 'yesno_model.pkl')
+    #model = joblib.load(model_path)
 
 
 
@@ -78,6 +79,6 @@ def init():
 def run(data):
     test = json.loads(data)
     print(f"received data {test}")
-    # inputs, attentionmask = encode_data(test,256)
-    # outputs = predict(model,inputs, attentionmask)
-    # return outputs
+    inputs, attentionmask = encode_data(test,256)
+    outputs = predict(model,inputs, attentionmask)
+    return outputs

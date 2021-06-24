@@ -3,6 +3,8 @@ from azureml.core.webservice import LocalWebservice
 from azureml.core import Environment
 from azureml.core.model import InferenceConfig
 
+from azureml.core.conda_dependencies import CondaDependencies 
+
 ws = Workspace.from_config()
 
 #load model
@@ -13,6 +15,11 @@ deployment_config = LocalWebservice.deploy_configuration(port=6789)
 
 #Configure environment
 env = Environment(name="PythonEnv")
+
+python_packages = ['transformers', 'joblib','torch']
+for package in python_packages:
+    env.python.conda_dependencies.add_pip_package(package)
+
 dummy_inference_config = InferenceConfig(
     environment=env,
     source_directory=".",
